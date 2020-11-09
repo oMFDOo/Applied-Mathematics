@@ -25,14 +25,16 @@ namespace Math10
         #region 필드
         /// 3차원 모델 그룹
         private Model3DGroup model3Dgroup = new Model3DGroup();
-       
         #endregion
 
+        #region 생성자
         public MainWindow()
         {
             InitializeComponent();
         }
+        #endregion
 
+        #region 값추출
         void readTrianglePos(double[,] triangle, TextBox value, int idx)
         {
             string text = value.Text;
@@ -47,9 +49,12 @@ namespace Math10
                 }
             }
         }
+        #endregion
 
+        #region 클릭 이벤트 및 메인 계산
         private void simpleButtonClick(object sender, RoutedEventArgs eassssd)
         {
+            model3Dgroup.Children.Clear();
             //값분석
             double[,] trianglePos = new double[3,3]; // => 평면을 구성하는 점 3개 (a, b, c), (d, e, f), (g, h, i)
             double res1, res2, res3;        // 평면의 법선 벡터 = (res1, res2, res3)
@@ -104,7 +109,7 @@ namespace Math10
             triangleMesh.Normals.Add(normal);
             drawTriangle(triangleMesh, point0, point1, point2, normal);
 
-            DefineModel(this.model3Dgroup);
+            DefineModel(this.model3Dgroup, linePos);
             ModelVisual3D modelVisual3D = new ModelVisual3D();
             modelVisual3D.Content = this.model3Dgroup;
             this.mainViewport.Children.Add(modelVisual3D);
@@ -147,10 +152,10 @@ namespace Math10
             CAxCP[2] = (a - g) * (y - h) - (b - h) * (x - g);
 
             
-            ABC = Math.Sqrt(Math.Abs(ABxAC[0] * ABxAC[0] + ABxAC[1] * ABxAC[1] + ABxAC[2] * ABxAC[2]));
-            ABP = Math.Sqrt(Math.Abs(ABxAP[0] * ABxAP[0] + ABxAP[1] * ABxAP[1] + ABxAP[2] * ABxAP[2]));
-            PBC = Math.Sqrt(Math.Abs(BCxBP[0] * BCxBP[0] + BCxBP[1] * BCxBP[1] + BCxBP[2] * BCxBP[2]));
-            APC = Math.Sqrt(Math.Abs(CAxCP[0] * CAxCP[0] + CAxCP[1] * CAxCP[1] + CAxCP[2] * CAxCP[2]));
+            ABC = Math.Sqrt(Math.Abs(ABxAC[0] * ABxAC[0] + ABxAC[1] * ABxAC[1] + ABxAC[2] * ABxAC[2]))/2;
+            ABP = Math.Sqrt(Math.Abs(ABxAP[0] * ABxAP[0] + ABxAP[1] * ABxAP[1] + ABxAP[2] * ABxAP[2]))/2;
+            PBC = Math.Sqrt(Math.Abs(BCxBP[0] * BCxBP[0] + BCxBP[1] * BCxBP[1] + BCxBP[2] * BCxBP[2]))/2;
+            APC = Math.Sqrt(Math.Abs(CAxCP[0] * CAxCP[0] + CAxCP[1] * CAxCP[1] + CAxCP[2] * CAxCP[2]))/2;
 
             string kPos = string.Format("{0:0.000} / {1:0.000} / {2:0.000}", x, y, z);
             this.spot.Content = kPos;
@@ -180,6 +185,7 @@ namespace Math10
                 this.result.Content = "빗나간다.";
             }
         }
+        #endregion
 
         #region 삼각형 그리기 - drawTriangle(triangleMesh, point0, point1, point2, normal)
         void drawTriangle(MeshGeometry3D triangleMesh, Point3D point0, Point3D point1, Point3D point2, Vector3D normal)
@@ -345,12 +351,12 @@ namespace Math10
         /// 모델 정의하기
         /// </summary>
         /// <param name="model3DGroup"></param>
-        private void DefineModel(Model3DGroup model3DGroup)
+        private void DefineModel(Model3DGroup model3DGroup, double[,] linePos)
         {
             // Z축 실린더를 정의한다.
             MeshGeometry3D mesh3 = new MeshGeometry3D();
 
-            AddCylinder(mesh3, new Point3D(1.44, 0.59, 2.71), new Vector3D(1.32, 1.81, -0.48), 0.1, 20);
+            AddCylinder(mesh3, new Point3D(linePos[0, 0], linePos[0, 1], linePos[0, 2]), new Vector3D(linePos[1, 0], linePos[1, 1], linePos[1, 2]), 0.025, 20);
 
             SolidColorBrush brush3 = Brushes.Red;
             DiffuseMaterial material3 = new DiffuseMaterial(brush3);
@@ -359,6 +365,5 @@ namespace Math10
             model3DGroup.Children.Add(model3);
         }
         #endregion
-        
     }
 }
