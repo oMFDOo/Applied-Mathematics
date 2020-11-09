@@ -33,21 +33,71 @@ namespace Math10
             InitializeComponent();
         }
 
-        private void simpleButtonClick(object sender, RoutedEventArgs e)
+        void readTrianglePos(double[,] triangle, TextBox value, int idx)
         {
+            string text = value.Text;
+
+            string[] list = text.Split(',');
+            for (int i = 0; i < list.Length; i++)
+            {
+                list[i] = list[i].Trim();
+                if (double.TryParse(list[i], out double result))
+                {
+                    triangle[idx, i] = result;
+                }
+            }
+        }
+
+        private void simpleButtonClick(object sender, RoutedEventArgs eassssd)
+        {
+            //값분석
+            double[,] trianglePos = new double[3,3]; // => 평면을 구성하는 점 3개 (a, b, c), (d, e, f), (g, h, i)
+            double res1, res2, res3;        // 평면의 법선 벡터 = (res1, res2, res3)
+            double r;               // r: 평면의 방정식 중 오른쪽 상수항 부분
+            double[,] linePos = new double[2, 3];  // => 직선을 구성하는 점 2개 (x0, y0, z0), (x1, y1, z1)
+            double res4, res5, res6, t;
+            double x, y, z;			// x, y, z: 직선과 평면의 교점
+
+
+
+
+            // 텍스트박스 값읽기 - 삼각형
+            readTrianglePos(trianglePos, this.pos1, 0);
+            readTrianglePos(trianglePos, this.pos2, 1);
+            readTrianglePos(trianglePos, this.pos3, 2);
+
+            // 텍스트박스 값읽기 - 직선
+            readTrianglePos(linePos, this.pos4, 0);
+            readTrianglePos(linePos, this.pos5, 1);
+            double a, b, c, d, e, f, g, h, i;
+            a = trianglePos[0, 0];
+            b = trianglePos[0, 1];
+            c = trianglePos[0, 2];
+            d = trianglePos[1, 0];
+            e = trianglePos[1, 1];
+            f = trianglePos[1, 2];
+            g = trianglePos[2, 0];
+            h = trianglePos[2, 1];
+            i = trianglePos[2, 2];
+
+            // 평면의 방정식 값 도출
+            res1 = (e - b) * (i - c) - (f - c) * (h - b);
+            res2 = (f - c) * (g - a) - (d - a) * (i - c);
+            res3 = (d - a) * (h - b) - (e - b) * (g - a);
+
             MeshGeometry3D triangleMesh = new MeshGeometry3D();
 
             // 삼각형의 세 점 추가
-            Point3D point0 = new Point3D(0, 0, 0);
-            Point3D point1 = new Point3D(5, 0, 0);
-            Point3D point2 = new Point3D(0, 0, 5);
+            Point3D point0 = new Point3D(trianglePos[0, 0], trianglePos[0, 1], trianglePos[0, 2]);
+            Point3D point1 = new Point3D(trianglePos[1, 0], trianglePos[1, 1], trianglePos[1, 2]);
+            Point3D point2 = new Point3D(trianglePos[2, 0], trianglePos[2, 1], trianglePos[2, 2]);
 
             triangleMesh.Positions.Add(point0);
             triangleMesh.Positions.Add(point1);
             triangleMesh.Positions.Add(point2);
 
             // 법선벡터 추가
-            Vector3D normal = new Vector3D(0, 1, 0);
+            Vector3D normal = new Vector3D(res1, res2, res3);
 
             triangleMesh.Normals.Add(normal);
             triangleMesh.Normals.Add(normal);
@@ -58,7 +108,77 @@ namespace Math10
             ModelVisual3D modelVisual3D = new ModelVisual3D();
             modelVisual3D.Content = this.model3Dgroup;
             this.mainViewport.Children.Add(modelVisual3D);
+            // 14
+            r = res1 * trianglePos[0, 0] + res2 * trianglePos[0, 1] + res3 * trianglePos[0, 2];
 
+            /* 두 점을 지나는 직선의 대칭 방정식 이용, (방정식) = t 형태에서
+	        계수부분(res4), 상수부분(res6) 각각 계산하여 최종적인 t 값 도출 */
+            res4 = res1 * (linePos[1, 0] - linePos[0,0]) + res2 * (linePos[1, 1] - linePos[0, 1]) + res3 * (linePos[1, 2] - linePos[0, 2]);
+            res5 = res1 * linePos[0, 0] + res2 * linePos[0, 1] + res3 * linePos[0, 2];
+            res6 = r - res5;
+            t = res6 / res4;
+
+
+            /* 찾아낸 t 값을 대칭 방정식에 대입하여 직선과 평면의 교점의 x, y, z 좌표 계산*/
+            x = (linePos[1, 0] - linePos[0, 0]) * t + linePos[0, 0];
+            y = (linePos[1, 1] - linePos[0, 1]) * t + linePos[0, 1];
+            z = (linePos[1, 2] - linePos[0, 2]) * t + linePos[0, 2];
+
+            double[] ABxAP = new double[3], ABxAC = new double[3], BCxBP = new double[3], CAxCP = new double[3];
+            double ABC, ABP, PBC, APC;
+            double alpha, beta, gamma;
+            
+
+            ABxAC[0] = (e - b) * (i - c) - (f - c) * (h - b);
+            ABxAC[1] = (f - c) * (g - a) - (d - a) * (i - c);
+            ABxAC[2] = (d - a) * (h - b) - (e - b) * (g - a);
+
+            ABxAP[0] = (e - b) * (z - c) - (f - c) * (y - b);
+            ABxAP[1] = (f - c) * (x - a) - (d - a) * (z - c);
+            ABxAP[2] = (d - a) * (y - b) - (e - b) * (x - a);
+
+
+            BCxBP[0] = (h - e) * (z - f) - (i - f) * (y - e);
+            BCxBP[1] = (i - f) * (x - d) - (g - d) * (z - f);
+            BCxBP[2] = (g - d) * (y - e) - (h - e) * (x - d);
+
+            CAxCP[0] = (b - h) * (z - i) - (c - i) * (y - h);
+            CAxCP[1] = (c - i) * (x - g) - (a - g) * (z - i);
+            CAxCP[2] = (a - g) * (y - h) - (b - h) * (x - g);
+
+            
+            ABC = Math.Sqrt(Math.Abs(ABxAC[0] * ABxAC[0] + ABxAC[1] * ABxAC[1] + ABxAC[2] * ABxAC[2]));
+            ABP = Math.Sqrt(Math.Abs(ABxAP[0] * ABxAP[0] + ABxAP[1] * ABxAP[1] + ABxAP[2] * ABxAP[2]));
+            PBC = Math.Sqrt(Math.Abs(BCxBP[0] * BCxBP[0] + BCxBP[1] * BCxBP[1] + BCxBP[2] * BCxBP[2]));
+            APC = Math.Sqrt(Math.Abs(CAxCP[0] * CAxCP[0] + CAxCP[1] * CAxCP[1] + CAxCP[2] * CAxCP[2]));
+
+            string kPos = string.Format("{0:0.000} / {1:0.000} / {2:0.000}", x, y, z);
+            this.spot.Content = kPos;
+
+            // 값출력
+            this.dimension1.Content = ABC;
+            this.dimension2.Content = ABP;
+            this.dimension3.Content = PBC;
+            this.dimension4.Content = APC;
+
+            alpha = PBC / ABC;
+            beta = APC / ABC;
+            gamma = ABP / ABC;
+
+            string abg = string.Format("{0:0.000} / {1:0.000} / {2:0.000}", alpha, beta, gamma);
+
+            this.alBeGam.Content = abg;
+
+            if (alpha >= 0 && beta >= 0 && gamma >= 0 && Math.Abs(1 - (alpha + beta + gamma)) <= 0.001)
+            {
+                this.result.Foreground = new SolidColorBrush(Color.FromRgb(0, 255, 80));
+                this.result.Content = "관통한다.";
+            }
+            else
+            {
+                this.result.Foreground = new SolidColorBrush(Color.FromRgb(255, 0 , 0));
+                this.result.Content = "빗나간다.";
+            }
         }
 
         #region 삼각형 그리기 - drawTriangle(triangleMesh, point0, point1, point2, normal)
@@ -239,5 +359,6 @@ namespace Math10
             model3DGroup.Children.Add(model3);
         }
         #endregion
+        
     }
 }

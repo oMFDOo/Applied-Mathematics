@@ -12,7 +12,7 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="MainWindow" Height="600" Width="800">
+        Title="응용수학 10주차 팀과제" Height="620" Width="800">
 
     <Grid>
         <DockPanel Width="Auto" VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.Column="0" Grid.Row="0" Margin="0,0,0,0" Grid.RowSpan="1">
@@ -22,11 +22,75 @@
                         <GradientStop Color="#333333"/>
                     </LinearGradientBrush>
                 </StackPanel.Background>
-                <StackPanel Margin="10">
+                <StackPanel Margin="5">
+                </StackPanel>
+                <Label Foreground="#fff" Content="삼각형ABC" FontSize="18" FontWeight="SemiBold"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#fff" Content="A(x,y,z)" Width="60"/>
+                    <TextBox x:Name="pos1" Foreground="#fff" Height="24" TextWrapping="Wrap" Text="-1, 2, 0" Width="155"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#fff" Content="B(x,y,z)" Width="60"/>
+                    <TextBox x:Name="pos2" Foreground="#fff" Height="24" TextWrapping="Wrap" Text="2, 1, 3" Width="155"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#fff" Content="C(x,y,z)" Width="60"/>
+                    <TextBox x:Name="pos3" Foreground="#fff" Height="24" TextWrapping="Wrap" Text="1, 1, -1" Width="155"/>
+                </StackPanel>
+                
+                <StackPanel Margin="5">
+                </StackPanel>
+                
+                <Label Foreground="#fff" Content="총알 궤적PQ" FontSize="18" FontWeight="SemiBold"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#fff" Content="P(x,y,z)" Width="60"/>
+                    <TextBox x:Name="pos4" Foreground="#fff" Height="24" TextWrapping="Wrap" Text="1.44, 0.59, 2.71" Width="155"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#fff" Content="Q(x,y,z)" Width="60"/>
+                    <TextBox x:Name="pos5" Foreground="#fff" Height="24" TextWrapping="Wrap" Text="1.32, 1.81, -0.48" Width="155"/>
+                </StackPanel>
+                <StackPanel Margin="15">
                     <Button x:Name="simpleButton" Click="simpleButtonClick" Content="결과확인" Margin="0,0,-0.2,0"/>
                 </StackPanel>
+                
+                <Label Foreground="#fff" Content="평면과 궤적의 접점 K" FontSize="18" FontWeight="SemiBold"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#fff" Content="K(x,y,z)" Width="60"/>
+                    <Label x:Name="spot" Foreground="#fff" Height="24" Width="155"/>
+                </StackPanel>
+
+                <StackPanel Margin="5">
+                </StackPanel>
+
+                <Label Foreground="#fff" Content="삼각형 넓이" FontSize="18" FontWeight="SemiBold"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#fff" Content="△ABC" Width="60"/>
+                    <Label x:Name="dimension1" Foreground="#fff" Height="24"  Content="" Width="155"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#fff" Content="△ABK" Width="60"/>
+                    <Label x:Name="dimension2" Foreground="#fff" Height="24"  Content="" Width="155"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#fff" Content="△KBC" Width="60"/>
+                    <Label x:Name="dimension3" Foreground="#fff" Height="24"  Content="" Width="155"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#fff" Content="△AKC" Width="60"/>
+                    <Label x:Name="dimension4" Foreground="#fff" Height="24"  Content="" Width="155"/>
+                </StackPanel>
+
+                <StackPanel Margin="5">
+                </StackPanel>
+                
+                <Label Foreground="#fff" Content="Alpha / Beta/ Gamma" FontSize="18" FontWeight="SemiBold"/>
+                <Label x:Name="alBeGam" Foreground="#fff" Content=""/>
+
+                <Label Foreground="#fff" Content="벡터PQ는 삼각형ABC를" FontSize="14" FontWeight="SemiBold"/>
+                <Label x:Name="result" Foreground="#fff" HorizontalContentAlignment="Center" FontSize="18" FontWeight="SemiBold"/>
             </StackPanel>
-            <Viewport3D Name="mainViewport" ClipToBounds="True">
+            <Viewport3D x:Name="mainViewport" ClipToBounds="True">
                 <Viewport3D.Camera>
                     <PerspectiveCamera FarPlaneDistance="300" LookDirection="-11,-10,-9"
                                        UpDirection="0,1,0" NearPlaneDistance="0" Position="11,10,9"
