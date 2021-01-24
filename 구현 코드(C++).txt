@@ -1,0 +1,125 @@
+#include <iostream>
+#include <math.h>
+using namespace std;
+
+/* (응용수학) 팀원: 정현수, 김남빈, 황진주, 김성안, 소준형 */
+
+/* 미해결 목록
+* 1. 벡터의 종점이 시점을 기준으로 평면과 반대 방향에 있는 경우 오류 처리
+* 2. 벡터와 평면이 평행한 경우 오류 처리
+*/
+
+void cal() {
+	double a, b, c, d, e, f, g, h, i; // => 평면을 구성하는 점 3개 (a, b, c), (d, e, f), (g, h, i)
+	double res1, res2, res3;		// 평면의 법선 벡터 = (res1, res2, res3)
+	double r;				// r: 평면의 방정식 중 오른쪽 상수항 부분
+	double x0, y0, z0, x1, y1, z1;	// => 직선을 구성하는 점 2개 (x0, y0, z0), (x1, y1, z1)
+	double res4, res5, res6, t;
+	double x, y, z;			// x, y, z: 직선과 평면의 교점
+	cout << "============= 아래는 입력 예시입니다. 복사하여 사용하십시오. ==============\n" << endl;
+	cout << "(예시) 관통하는 경우: -1 2 0 2 1 3 1 1 -1 1.44 0.59 2.71 1.32 1.81 -0.48" << endl;
+	cout << "(예시) 빗나가는 경우: -1 2 0 2 1 3 1 1 -1 2.65 1.81 2.71 1.32 1.81 -0.48\n" << endl;
+	cout << "===========================================================================\n" << endl;
+	cout << "삼각형을 구성하는 세 점 A, B, C의 좌표 입력" << endl;
+	cout << "(ex A=(1,2,3), B=(4,5,6), C=(7,8,9)이면 1 2 3 4 5 6 7 8 9 입력)" << endl;
+	cout << ">> ";
+	cin >> a >> b >> c >> d >> e >> f >> g >> h >> i;
+	cout << "\n궤적을 구성하는 벡터의 시점 P와 종점 Q의 좌표 입력" << endl;
+	cout << "(ex P=(1,2,3), Q=(4,5,6)이면 1 2 3 4 5 6 입력)" << endl;
+	cout << ">> ";
+	cin >> x0 >> y0 >> z0 >> x1 >> y1 >> z1;
+
+	/* 평면의 방정식 도출 과정 (점(a, b, c) 기준) */
+	res1 = (e - b) * (i - c) - (f - c) * (h - b);
+	res2 = (f - c) * (g - a) - (d - a) * (i - c);
+	res3 = (d - a) * (h - b) - (e - b) * (g - a);
+	system("cls");
+	cout << "======================================검사 결과=======================================" << endl;
+
+	cout << "\n세 점 A, B, C의 좌표: ";
+	cout << "A = (" << a << ", " << b << ", " << c << "), ";
+	cout << "B = (" << d << ", " << e << ", " << f << "), ";
+	cout << "C = (" << g << ", " << h << ", " << i << ")" << endl;
+
+	cout << "총알 궤적의 시점 P와 종점 Q의 좌표: ";
+	cout << "P = (" << x0 << ", " << y0 << ", " << z0 << "), ";
+	cout << "Q = (" << x1 << ", " << y1 << ", " << z1 << ")" << endl;
+
+	cout << "\n1. 세 점 A, B, C를 지나는 평면의 법선 벡터 = ";
+	cout << "(" << res1 << ", " << res2 << ", " << res3 << ")" << endl; // 법선 벡터 출력
+	r = res1 * a + res2 * b + res3 * c;
+
+	cout << "\n2. 세 점 A, B, C를 지나는 평면의 방정식: (" << res1 << ")x+(" << res2 << ")y+(" << res3 << ")z=" << r << endl;
+
+	/* 두 점을 지나는 직선의 대칭 방정식 이용, (방정식) = t 형태에서 
+	계수부분(res4), 상수부분(res6) 각각 계산하여 최종적인 t 값 도출 */
+	res4 = res1 * (x1 - x0) + res2 * (y1 - y0) + res3 * (z1 - z0);
+	res5 = res1 * x0 + res2 * y0 + res3 * z0;
+	res6 = r - res5;
+	t = res6 / res4;
+
+	/* 찾아낸 t 값을 대칭 방정식에 대입하여 직선과 평면의 교점의 x, y, z 좌표 계산*/
+	x = (x1 - x0) * t + x0;
+	y = (y1 - y0) * t + y0;
+	z = (z1 - z0) * t + z0;
+
+	cout << "\n3. 세 점 A, B, C를 지나는 평면과 시, 종점이 각각 P, Q인 벡터가 충돌하는 점을 K라고 할 때," << endl;
+	cout << "   점 K (충돌 지점)의 좌표 : x = " << x << ", y = " << y << ", z = " << z << endl;
+
+	double ABxAP[3], ABxAC[3], BCxBP[3], CAxCP[3];
+	double ABC, ABP, PBC, APC;
+	double alpha, beta, gamma;
+
+	ABxAC[0] = (e - b) * (i - c) - (f - c) * (h - b);
+	ABxAC[1] = (f - c) * (g - a) - (d - a) * (i - c);
+	ABxAC[2] = (d - a) * (h - b) - (e - b) * (g - a);
+
+	ABxAP[0] = (e - b) * (z - c) - (f - c) * (y - b);
+	ABxAP[1] = (f - c) * (x - a) - (d - a) * (z - c);
+	ABxAP[2] = (d - a) * (y - b) - (e - b) * (x - a);
+
+
+	BCxBP[0] = (h - e) * (z - f) - (i - f) * (y - e);
+	BCxBP[1] = (i - f) * (x - d) - (g - d) * (z - f);
+	BCxBP[2] = (g - d) * (y - e) - (h - e) * (x - d);
+
+	CAxCP[0] = (b - h) * (z - i) - (c - i) * (y - h);
+	CAxCP[1] = (c - i) * (x - g) - (a - g) * (z - i);
+	CAxCP[2] = (a - g) * (y - h) - (b - h) * (x - g);
+
+	ABC = sqrt(ABxAC[0] * ABxAC[0] + ABxAC[1] * ABxAC[1] + ABxAC[2] * ABxAC[2]) / 2;
+	ABP = sqrt(ABxAP[0] * ABxAP[0] + ABxAP[1] * ABxAP[1] + ABxAP[2] * ABxAP[2]) / 2;
+	PBC = sqrt(BCxBP[0] * BCxBP[0] + BCxBP[1] * BCxBP[1] + BCxBP[2] * BCxBP[2]) / 2;
+	APC = sqrt(CAxCP[0] * CAxCP[0] + CAxCP[1] * CAxCP[1] + CAxCP[2] * CAxCP[2]) / 2;
+
+	alpha = PBC / ABC;
+	beta = APC / ABC;
+	gamma = ABP / ABC;
+
+	cout << "\n4. 삼각형 ABC의 면적: " << ABC << endl;
+	cout << "\n5. 삼각형 ABK의 면적: " << ABP << endl;
+	cout << "\n6. 삼각형 KBC의 면적: " << PBC << endl;
+	cout << "\n7. 삼각형 AKC의 면적: " << APC << endl;
+
+	cout << "\n8. alpha: " << alpha << ", beta: " << beta << ", gamma: " << gamma << endl;
+	cout << "\n9. alpha + beta + gamma = " << alpha + beta + gamma << endl;
+
+	cout << "\n * 최종 결과: 벡터 PQ는 ";
+
+	if (alpha >= 0 && beta >= 0 && gamma >= 0 && fabs(1 - (alpha + beta + gamma)) <= 0.000001)
+		cout << "삼각형 ABC를 관통함." << endl;
+	else
+		cout << "삼각형 ABC를 빗나감." << endl;
+	cout << "\n======================================================================================" << endl;
+	cout << "\n충돌 검사를 ";
+	system("pause");
+}
+
+
+int main() {
+	while (1) {
+		cal();
+		system("cls");
+	}
+	return 0;
+}
