@@ -32,6 +32,9 @@
 <br><br>
 
 ### 시뮬레이션 제작
+![image](https://user-images.githubusercontent.com/50069569/227493951-13798b13-a8df-462a-9110-4d1554aad3c1.png)
+
+
 - C# WPF를 기반으로 작성
 - 삼각형 3개의 좌표와 총알궤적 2개의 좌표를 입력
 - 결과확인 버튼을 누르면 접점, 각 넓이, Alpha/Beta/Gamma 값, 충돌여부, 3d 그래픽을 출력한다.
